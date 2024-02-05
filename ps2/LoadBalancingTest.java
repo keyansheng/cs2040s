@@ -23,6 +23,38 @@ public class LoadBalancingTest {
     }
 
     @Test
+    public void testIsFeasibleLoad3() {
+        int[] jobSizes = {};
+        int processors = 1;
+        int queryLoad = 1;
+        assertEquals(false, LoadBalancing.isFeasibleLoad(jobSizes, queryLoad, processors));
+    }
+
+    @Test
+    public void testIsFeasibleLoad4() {
+        int[] jobSizes = {1};
+        int processors = 0;
+        int queryLoad = 1;
+        assertEquals(false, LoadBalancing.isFeasibleLoad(jobSizes, queryLoad, processors));
+    }
+
+    @Test
+    public void testIsFeasibleLoad5() {
+        int[] jobSizes = {1};
+        int processors = 1;
+        int queryLoad = 0;
+        assertEquals(false, LoadBalancing.isFeasibleLoad(jobSizes, queryLoad, processors));
+    }
+
+    @Test
+    public void testIsFeasibleLoad6() {
+        int[] jobSizes = {1, 3, 5, 7, 9, 11, 10, 8, 6, 4};
+        int processors = 5;
+        int queryLoad = 17;
+        assertEquals(false, LoadBalancing.isFeasibleLoad(jobSizes, queryLoad, processors));
+    }
+
+    @Test
     public void testFindLoad1() {
         int[] jobSizes = {1, 3, 5, 7, 9, 11, 10, 8, 6, 4};
         int processors = 5;
@@ -57,4 +89,17 @@ public class LoadBalancingTest {
         assertEquals(7, LoadBalancing.findLoad(jobSizes, processors));
     }
 
+    @Test
+    public void testFindLoad6() {
+        int[] jobSizes = {};
+        int processors = 1;
+        assertEquals(-1, LoadBalancing.findLoad(jobSizes, processors));
+    }
+
+    @Test
+    public void testFindLoad7() {
+        int[] jobSizes = {1};
+        int processors = 0;
+        assertEquals(-1, LoadBalancing.findLoad(jobSizes, processors));
+    }
 }
