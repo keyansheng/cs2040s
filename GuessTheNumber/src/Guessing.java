@@ -8,13 +8,17 @@ public class Guessing {
      * Implement how your algorithm should make a guess here
      */
     public int guess() {
-        return  0;
+        return low + (high - low) / 2;
     }
 
     /**
      * Implement how your algorithm should update its guess here
      */
     public void update(int answer) {
-        ;;
+        if (answer == -1) {
+            low = this.guess() + 1;
+        } else {
+            high = this.guess() - 1;
+        }
     }
 }
