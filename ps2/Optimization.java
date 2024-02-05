@@ -21,7 +21,36 @@ public class Optimization {
      */
     public static int searchMax(int[] dataArray) {
         // TODO: Implement this
-        return 0;
+        // case 1: length < 2
+        if (dataArray.length == 0) {
+            return 0;
+        } else if (dataArray.length == 1) {
+            return dataArray[0];
+        }
+        // case 2: v-shaped i.e. largest integer is at the start or end
+        if (dataArray[0] > dataArray[1]) {
+            return Math.max(dataArray[0], dataArray[dataArray.length - 1]);
+        }
+        // case 3: ^-shaped i.e. largest integer is somewhere in the middle
+        // check if each subarray of length 2 is increasing or decreasing
+        // search range: 0..length-2 (lower index of each subarray)
+        int low = 0;
+        int high = dataArray.length - 2;
+        while (low < high) {
+            int mid = low + (high - low) / 2;
+            // since each element is unique, each comparison is either < or >, not =
+            if (dataArray[mid] < dataArray[mid + 1]) {
+                // increasing, largest integer is in right half
+                low = mid + 1;
+            } else {
+                // decreasing, largest integer is in left half
+                high = mid;
+            }
+        }
+        // since the set of integers is a total order, any non-empty finite set of integers must have a largest integer
+        // precondition/invariant: low <= indexOfLargest <= high
+        // postcondition: (low <= indexOfLargest <= high) and not (low < high) implies low == indexOfLargest == high
+        return Math.max(dataArray[low], dataArray[low + 1]);
     }
 
     /**

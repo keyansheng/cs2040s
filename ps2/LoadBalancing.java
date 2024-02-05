@@ -15,7 +15,25 @@ public class LoadBalancing {
      */
     public static boolean isFeasibleLoad(int[] jobSizes, int queryLoad, int p) {
         // TODO: Implement this
-        return false;
+        if (jobSizes.length == 0 || queryLoad <= 0 || p <= 0) {
+            return false;
+        }
+        int processorsUsed = 1;
+        int currentProcessorLoad = 0;
+        for (int jobSize : jobSizes) {
+            if (jobSize > queryLoad) {
+                return false;
+            } else if (currentProcessorLoad + jobSize > queryLoad) {
+                processorsUsed++;
+                currentProcessorLoad = jobSize;
+            } else {
+                currentProcessorLoad += jobSize;
+            }
+            if (processorsUsed > p) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -27,7 +45,26 @@ public class LoadBalancing {
      */
     public static int findLoad(int[] jobSizes, int p) {
         // TODO: Implement this
-        return 0;
+        if (jobSizes.length == 0 || p <= 0) {
+            return -1;
+        }
+        // minimum load: no processor load exceeds the size of the largest job
+        // maximum load: all jobs on one processor
+        int minLoad = 0;
+        int maxLoad = 0;
+        for (int jobSize : jobSizes) {
+            minLoad = Math.max(minLoad, jobSize);
+            maxLoad += jobSize;
+        }
+        while (minLoad < maxLoad) {
+            int midLoad = minLoad + (maxLoad - minLoad) / 2;
+            if (isFeasibleLoad(jobSizes, midLoad, p)) {
+                maxLoad = midLoad;
+            } else {
+                minLoad = midLoad + 1;
+            }
+        }
+        return minLoad;
     }
 
     // These are some arbitrary testcases.
