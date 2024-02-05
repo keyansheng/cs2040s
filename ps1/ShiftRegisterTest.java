@@ -71,4 +71,38 @@ public class ShiftRegisterTest {
         r.shift();
         r.generate(4);
     }
+
+    /*
+    When the seed is larger than the specified register, I think a proper
+    response would be to throw an error since it is probably not intentional and
+    there is probably a mistake somewhere, unless there is a good reason for
+    doing so that I haven't learnt about yet.
+
+    The testing library might have ways of asserting that a particular error is
+    thrown, and if that exists, it can be used to test this case.
+    */
+
+    @Test
+    public void testShift2() {
+        ILFShiftRegister r = getRegister(2, 0);
+        int[] seed = { 1, 0 };
+        r.setSeed(seed);
+        int[] expected = { 1, 0, 1, 1, 0, 1, 1, 0, 1, 1 };
+        for (int i = 0; i < 10; i++) {
+            assertEquals(expected[i], r.shift());
+        }
+    }
+
+    @Test
+    public void testEmpty() {
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> {
+            ILFShiftRegister r = getRegister(0, 0);
+            int[] seed = {};
+            r.setSeed(seed);
+            for (int i = 0; i < 10; i++) {
+                int j = r.shift();
+                System.out.print(j);
+            }
+        });
+    }
 }

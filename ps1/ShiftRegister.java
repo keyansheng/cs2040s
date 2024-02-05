@@ -14,12 +14,17 @@ public class ShiftRegister implements ILFShiftRegister {
     // Create your class variables here
     ///////////////////////////////////
     // TODO:
+    private int[] register;
+    private int size;
+    private int tap;
 
     ///////////////////////////////////
     // Create your constructor here:
     ///////////////////////////////////
     ShiftRegister(int size, int tap) {
         // TODO:
+        this.size = size;
+        this.tap = tap;
     }
 
     ///////////////////////////////////
@@ -33,6 +38,7 @@ public class ShiftRegister implements ILFShiftRegister {
     @Override
     public void setSeed(int[] seed) {
         // TODO:
+        this.register = seed;
     }
 
     /**
@@ -43,7 +49,12 @@ public class ShiftRegister implements ILFShiftRegister {
     @Override
     public int shift() {
         // TODO:
-        return 0;
+        int feedbackBit = this.register[size - 1] ^ this.register[tap];
+        for (int i = size - 1; i > 0; i--) {
+            this.register[i] = this.register[i - 1];
+        }
+        this.register[0] = feedbackBit;
+        return feedbackBit;
     }
 
     /**
@@ -55,7 +66,13 @@ public class ShiftRegister implements ILFShiftRegister {
     @Override
     public int generate(int k) {
         // TODO:
-        return 0;
+        int output = 0;
+        while (k > 0) {
+            output <<= 1;
+            output |= shift();
+            k--;
+        }
+        return output;
     }
 
     /**
