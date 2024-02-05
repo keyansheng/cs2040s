@@ -20,7 +20,7 @@ public class SortingTester {
         Random random = new Random(size);
         KeyValuePair[] testArray = new KeyValuePair[size];
         for (int i = 0; i < size; i++) {
-            testArray[i] = new KeyValuePair(random.nextInt(size / 2), -i);
+            testArray[i] = new KeyValuePair(random.nextInt(size / 2 + 1), -i);
         }
         long sortCost = sorter.sort(testArray);
         for (int i = 1; i < size; i++) {
@@ -50,6 +50,7 @@ public class SortingTester {
     }
 
     public static void main(String[] args) {
+        System.out.println(isStable(new SorterA(), 1));
         ISort[] sorters = {new SorterA(), new SorterB(), new SorterC(), new SorterD(), new SorterE(), new SorterF()};
         for (ISort sorter : sorters) {
             System.out.println(isStable(sorter, 100));
