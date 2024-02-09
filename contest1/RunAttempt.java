@@ -1,3 +1,5 @@
+import java.util.Random;
+
 /**
  * class RunAttempt
  *
@@ -125,7 +127,20 @@ public class RunAttempt implements ITreasureExtractor {
 
         // TODO: Feel free to change the test case here.
         //  bitmap is an array of n keys where 1 means that the key is correct (corresponds to one of the locks)
-        int[] bitmap = {1, 0, 1, 0, 1, 1, 0, 0};
+        Random random = new Random();
+        int N = 1024;
+        int k = 17;
+        int[] bitmap = new int[N];
+        for (int i = 0; i < k; i++) {
+            boolean found = false;
+            while (!found) {
+                int rnd = random.nextInt(bitmap.length);
+                if (bitmap[rnd] == 0) {
+                    bitmap[rnd] = 1;
+                    found = true;
+                }
+            }
+        }
 
         RunAttempt attemptRunner = new RunAttempt();
         attemptRunner.setTestCase(bitmap);
