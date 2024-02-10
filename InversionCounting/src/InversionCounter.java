@@ -3,9 +3,12 @@ class InversionCounter {
     public static long countSwaps(int[] arr) {
         long swaps = 0;
         for (int size = 1; size < arr.length; size *= 2) {
-            for (int i = 0; i < arr.length - 1; i += size * 2) {
-                if (i + size < arr.length) {
-                    swaps += mergeAndCount(arr, i, i + size - 1, i + size, Math.min(i + size * 2, arr.length) - 1);
+            for (int left1 = 0; left1 < arr.length - 1; left1 += size * 2) {
+                int right1 = left1 + size - 1;
+                if (right1 < arr.length - 1) {
+                    int left2 = right1 + 1;
+                    int right2 = Math.min(left2 + size - 1, arr.length - 1);
+                    swaps += mergeAndCount(arr, left1, right1, left2, right2);
                 }
             }
         }
