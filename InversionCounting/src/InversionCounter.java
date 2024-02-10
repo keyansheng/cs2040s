@@ -1,7 +1,15 @@
 class InversionCounter {
 
     public static long countSwaps(int[] arr) {
-        return 0;
+        long swaps = 0;
+        for (int size = 1; size < arr.length; size *= 2) {
+            for (int i = 0; i < arr.length - 1; i += size * 2) {
+                if (i + size < arr.length) {
+                    swaps += mergeAndCount(arr, i, i + size - 1, i + size, Math.min(i + size * 2, arr.length) - 1);
+                }
+            }
+        }
+        return swaps;
     }
 
     /**
