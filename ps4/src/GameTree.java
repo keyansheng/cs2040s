@@ -120,6 +120,26 @@ public class GameTree {
         return node;
     }
 
+    private int findValue(TreeNode node, Player player) {
+        if (node.leaf) {
+            return node.value;
+        }
+        if (player == Player.ONE) {
+            int maxValue = Integer.MIN_VALUE;
+            for (TreeNode child : node.children) {
+                maxValue = Math.max(maxValue, findValue(child, other(player)));
+            }
+            node.value = maxValue;
+        } else {
+            int minValue = Integer.MAX_VALUE;
+            for (TreeNode child : node.children) {
+                minValue = Math.min(minValue, findValue(child, other(player)));
+            }
+            node.value = minValue;
+        }
+        return node.value;
+    }
+
     /**
      * findValue determines the value for every node in the game tree and sets the value field of each node. If the root
      * is null (i.e., no tree exists), then it returns Integer.MIN_VALUE.
@@ -127,8 +147,10 @@ public class GameTree {
      * @return value of the root node of the game tree
      */
     int findValue() {
-        // TODO: Implement this
-        return 0;
+        if (root == null) {
+            return Integer.MIN_VALUE;
+        }
+        return findValue(root, Player.ONE);
     }
 
 

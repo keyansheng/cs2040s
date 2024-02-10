@@ -42,8 +42,27 @@ public class SGTree {
      * @return number of nodes
      */
     public int countNodes(TreeNode node, Child child) {
-        // TODO: Implement this
-        return 0;
+        if (child == Child.LEFT) {
+            node = node.left;
+        } else {
+            node = node.right;
+        }
+        if (node == null) {
+            return 0;
+        }
+        return countNodes(node, Child.LEFT) + 1 + countNodes(node, Child.RIGHT);
+    }
+
+    private int enumerateNode(TreeNode node, TreeNode[] nodes, int index) {
+        if (node.left != null) {
+            index = enumerateNode(node.left, nodes, index);
+        }
+        nodes[index] = node;
+        index++;
+        if (node.right != null) {
+            index = enumerateNode(node.right, nodes, index);
+        }
+        return index;
     }
 
     /**
@@ -54,8 +73,33 @@ public class SGTree {
      * @return array of nodes
      */
     public TreeNode[] enumerateNodes(TreeNode node, Child child) {
-        // TODO: Implement this
-        return new TreeNode[0];
+        if (child == Child.LEFT) {
+            if (node.left == null) {
+                return new TreeNode[0];
+            }
+            TreeNode[] nodes = new TreeNode[countNodes(node, child)];
+            enumerateNode(node.left, nodes, 0);
+            return nodes;
+        } else {
+            if (node.right == null) {
+                return new TreeNode[0];
+            }
+            TreeNode[] nodes = new TreeNode[countNodes(node, child)];
+            enumerateNode(node.right, nodes, 0);
+            return nodes;
+        }
+    }
+
+    private TreeNode buildTree(TreeNode[] nodeList, int start, int end) {
+        int mid = start + (end - start) / 2;
+        TreeNode node = new TreeNode(nodeList[mid].key);
+        if (start < mid) {
+            node.left = buildTree(nodeList, start, mid - 1);
+        }
+        if (mid < end) {
+            node.right = buildTree(nodeList, mid + 1, end);
+        }
+        return node;
     }
 
     /**
@@ -66,8 +110,10 @@ public class SGTree {
      * @return the new root node
      */
     public TreeNode buildTree(TreeNode[] nodeList) {
-        // TODO: Implement this
-        return new TreeNode(0);
+        if (nodeList.length == 0) {
+            return null;
+        }
+        return buildTree(nodeList, 0, nodeList.length - 1);
     }
 
     /**
