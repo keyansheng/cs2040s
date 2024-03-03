@@ -1,10 +1,9 @@
 /**
  * ScapeGoat Tree class
- *
- * This class contains some of the basic code for implementing a ScapeGoat tree.
- * This version does not include any of the functionality for choosing which node
- * to scapegoat.  It includes only code for inserting a node, and the code for rebuilding
- * a subtree.
+ * <p>
+ * This class contains some basic code for implementing a ScapeGoat tree. This version does not include any of the
+ * functionality for choosing which node to scapegoat. It includes only code for inserting a node, and the code for
+ * rebuilding a subtree.
  */
 
 public class SGTree {
@@ -14,12 +13,11 @@ public class SGTree {
 
     /**
      * TreeNode class.
-     *
+     * <p>
      * This class holds the data for a node in a binary tree.
-     *
-     * Note: we have made things public here to facilitate problem set grading/testing.
-     * In general, making everything public like this is a bad idea!
-     *
+     * <p>
+     * Note: we have made things public here to facilitate problem set grading/testing. In general, making everything
+     * public like this is a bad idea!
      */
     public static class TreeNode {
         int key;
@@ -55,7 +53,7 @@ public class SGTree {
     public TreeNode root = null;
 
     /**
-     * Counts the number of nodes in the specified subtree
+     * Counts the number of nodes in the specified subtree.
      *
      * @param node  the parent node, not to be counted
      * @param child the specified subtree
@@ -79,13 +77,13 @@ public class SGTree {
     }
 
     /**
-     * Builds an array of nodes in the specified subtree
+     * Builds an array of nodes in the specified subtree.
      *
      * @param node  the parent node, not to be included in returned array
      * @param child the specified subtree
      * @return array of nodes
      */
-    public TreeNode[] enumerateNodes(TreeNode node, Child child) {
+    TreeNode[] enumerateNodes(TreeNode node, Child child) {
         if (child == Child.LEFT) {
             if (node.left == null) {
                 return new TreeNode[0];
@@ -112,22 +110,21 @@ public class SGTree {
     }
 
     /**
-     * Builds a tree from the list of nodes
-     * Returns the node that is the new root of the subtree
+     * Builds a tree from the list of nodes Returns the node that is the new root of the subtree
      *
      * @param nodeList ordered array of nodes
      * @return the new root node
      */
-    public TreeNode buildTree(TreeNode[] nodeList) {
+    TreeNode buildTree(TreeNode[] nodeList) {
         return nodeList.length == 0 ? null : buildTree(nodeList, 0, nodeList.length - 1);
     }
 
     /**
-    * Rebuilds the specified subtree of a node
-    * 
-    * @param node the part of the subtree to rebuild
-    * @param child specifies which child is the root of the subtree to rebuild
-    */
+     * Rebuilds the specified subtree of a node.
+     *
+     * @param node  the part of the subtree to rebuild
+     * @param child specifies which child is the root of the subtree to rebuild
+     */
     public void rebuild(TreeNode node, Child child) {
         // Error checking: cannot rebuild null tree
         if (node == null) return;
@@ -144,10 +141,10 @@ public class SGTree {
     }
 
     /**
-    * Inserts a key into the tree
-    *
-    * @param key the key to insert
-    */
+     * Inserts a key into the tree.
+     *
+     * @param key the key to insert
+     */
     public void insert(int key) {
         if (root == null) {
             root = new TreeNode(key);
