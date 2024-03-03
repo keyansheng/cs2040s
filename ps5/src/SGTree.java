@@ -28,6 +28,26 @@ public class SGTree {
         TreeNode(int k) {
             key = k;
         }
+
+        private String formatTree(String prefix) {
+            String s = String.format("%s%d", prefix, this.key);
+            if (this.left != null) {
+                s = this.left.formatTree(prefix + "-") + "\n" + s;
+            }
+            if (this.right != null) {
+                s += "\n" + this.right.formatTree(prefix + "-");
+            }
+            return s;
+        }
+
+        public String formatTree() {
+            return this.formatTree("");
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(this.key);
+        }
     }
 
     // Root of the binary tree
@@ -190,12 +210,22 @@ public class SGTree {
         }
     }
 
+    @Override
+    public String toString() {
+        return root.formatTree();
+    }
+
     // Simple main function for debugging purposes
     public static void main(String[] args) {
         SGTree tree = new SGTree();
-        for (int i = 0; i < 100; i++) {
+        System.out.println("inserting " + 0);
+        tree.insert(0);
+        for (int i = 10; i >= 1; i--) {
+            System.out.println("inserting " + i);
             tree.insert(i);
         }
         tree.rebuild(tree.root, Child.RIGHT);
+        System.out.println("the final tree is");
+        System.out.println(tree);
     }
 }
