@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Trie {
 
@@ -6,13 +7,81 @@ public class Trie {
     final char WILDCARD = '.';
 
     private class TrieNode {
-        // TODO: Create your TrieNode class here.
-        int[] presentChars = new int[62];
+        TrieNode[] children = new TrieNode[62];
+        private boolean isEndOfString = false;
+
+        public void insert(String string, int stringIndex) {
+            if (stringIndex == string.length()) {
+                this.isEndOfString = true;
+            } else {
+                int child = charToChild(string.charAt(stringIndex));
+                if (this.children[child] == null) {
+                    this.children[child] = new TrieNode();
+                }
+                this.children[child].insert(string, stringIndex + 1);
+            }
+        }
+
+        public boolean contains(String string, int stringIndex) {
+            if (stringIndex == string.length()) {
+                return this.isEndOfString;
+            } else {
+                int child = charToChild(string.charAt(stringIndex));
+                return this.children[child] != null && this.children[child].contains(string, stringIndex + 1);
+            }
+        }
+
+        public int prefixSearch(String string, int stringIndex, ArrayList<String> results, int limit) {
+            if (limit == 0) {
+                return limit;
+            } else if (stringIndex >= string.length()) {
+                if (this.isEndOfString) {
+                    results.add(string);
+                    limit--;
+                }
+                for (int child = 0; child < this.children.length; child++) {
+                    if (this.children[child] != null) {
+                        limit = this.children[child].prefixSearch(string + childToChar(child), stringIndex + 1, results, limit);
+                    }
+                }
+            } else if (string.charAt(stringIndex) == WILDCARD) {
+                for (int child = 0; child < this.children.length; child++) {
+                    limit = this.prefixSearch(string.replaceFirst(Pattern.quote(String.valueOf(WILDCARD)), String.valueOf(childToChar(child))), stringIndex, results, limit);
+                }
+            } else {
+                int child = charToChild(string.charAt(stringIndex));
+                if (this.children[child] != null) {
+                    limit = this.children[child].prefixSearch(string, stringIndex + 1, results, limit);
+                }
+            }
+            return limit;
+        }
     }
 
-    public Trie() {
-        // TODO: Initialise a trie class here.
-        TrieNode root;
+    private TrieNode root = new TrieNode();
+
+    private static int charToChild(char character) {
+        if ('0' <= character && character <= '9') {
+            return character - '0';
+        } else if ('A' <= character && character <= 'Z') {
+            return character - 'A' + 10;
+        } else if ('a' <= character && character <= 'z') {
+            return character - 'a' + 36;
+        } else {
+            throw new IllegalArgumentException("Invalid character");
+        }
+    }
+
+    private static char childToChar(int child) {
+        if (0 <= child && child <= 9) {
+            return (char) (child + '0');
+        } else if (10 <= child && child <= 35) {
+            return (char) (child + 'A' - 10);
+        } else if (36 <= child && child <= 61) {
+            return (char) (child + 'a' - 36);
+        } else {
+            throw new IllegalArgumentException("Invalid child");
+        }
     }
 
     /**
@@ -21,7 +90,7 @@ public class Trie {
      * @param s string to insert into the Trie
      */
     void insert(String s) {
-        // TODO
+        root.insert(s, 0);
     }
 
     /**
@@ -31,8 +100,7 @@ public class Trie {
      * @return whether string s is inside the Trie
      */
     boolean contains(String s) {
-        // TODO
-        return false;
+        return root.contains(s, 0);
     }
 
     /**
@@ -44,7 +112,7 @@ public class Trie {
      * @param limit   max number of strings to add into results
      */
     void prefixSearch(String s, ArrayList<String> results, int limit) {
-        // TODO
+        root.prefixSearch(s, 0, results, limit);
     }
 
 

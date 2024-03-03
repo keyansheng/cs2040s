@@ -21,6 +21,7 @@ public class SGTree {
      */
     public static class TreeNode {
         int key;
+        int weight = 1;
         public TreeNode left = null;
         public TreeNode right = null;
 
@@ -40,8 +41,20 @@ public class SGTree {
      * @return number of nodes
      */
     public int countNodes(TreeNode node, Child child) {
-        // TODO: Implement this
-        return 0;
+        node = child == Child.LEFT ? node.left : node.right;
+        return node == null ? 0 : node.weight;
+    }
+
+    private int enumerateNodes(TreeNode node, TreeNode[] nodes, int index) {
+        if (node.left != null) {
+            index = enumerateNodes(node.left, nodes, index);
+        }
+        nodes[index] = node;
+        index++;
+        if (node.right != null) {
+            index = enumerateNodes(node.right, nodes, index);
+        }
+        return index;
     }
 
     /**
@@ -52,8 +65,30 @@ public class SGTree {
      * @return array of nodes
      */
     TreeNode[] enumerateNodes(TreeNode node, Child child) {
-        // TODO: Implement this
-        return new TreeNode[0];
+        if (child == Child.LEFT) {
+            if (node.left == null) {
+                return new TreeNode[0];
+            }
+            TreeNode[] nodes = new TreeNode[countNodes(node, child)];
+            enumerateNodes(node.left, nodes, 0);
+            return nodes;
+        } else {
+            if (node.right == null) {
+                return new TreeNode[0];
+            }
+            TreeNode[] nodes = new TreeNode[countNodes(node, child)];
+            enumerateNodes(node.right, nodes, 0);
+            return nodes;
+        }
+    }
+
+    private TreeNode buildTree(TreeNode[] nodeList, int start, int end) {
+        int mid = start + (end - start) / 2;
+        TreeNode node = nodeList[mid];
+        node.weight = end - start + 1;
+        node.left = start < mid ? buildTree(nodeList, start, mid - 1) : null;
+        node.right = mid < end ? buildTree(nodeList, mid + 1, end) : null;
+        return node;
     }
 
     /**
@@ -63,8 +98,7 @@ public class SGTree {
      * @return the new root node
      */
     TreeNode buildTree(TreeNode[] nodeList) {
-        // TODO: Implement this
-        return new TreeNode(0);
+        return nodeList.length == 0 ? null : buildTree(nodeList, 0, nodeList.length - 1);
     }
 
     /**
@@ -75,8 +109,9 @@ public class SGTree {
      * @return true if the node is balanced, false otherwise
      */
     public boolean checkBalance(TreeNode node) {
-        // TODO: Implement this
-        return true;
+        return node == null
+                || (countNodes(node, Child.LEFT) * 3 <= node.weight * 2
+                        && countNodes(node, Child.RIGHT) * 3 <= node.weight * 2);
     }
 
     /**
@@ -112,12 +147,33 @@ public class SGTree {
         }
 
         TreeNode node = root;
+        TreeNode parentNode = null;
+        Child parentNodeChild = null;
+        TreeNode parentParentNode = null;
+        Child parentParentNodeChild = null;
+
+        TreeNode unbalancedNode = null;
+        Child unbalancedNodeChild = null;
+        TreeNode rebuildNode = null;
+        Child rebuildNodeChild = null;
 
         while (true) {
+            node.weight++;
+            if (rebuildNode == null && !checkBalance(parentNode)) {
+                unbalancedNode = parentNode;
+                unbalancedNodeChild = parentNodeChild;
+                rebuildNode = parentParentNode;
+                rebuildNodeChild = parentParentNodeChild;
+            }
+            parentParentNode = parentNode;
+            parentParentNodeChild = parentNodeChild;
+            parentNode = node;
             if (key <= node.key) {
+                parentNodeChild = Child.LEFT;
                 if (node.left == null) break;
                 node = node.left;
             } else {
+                parentNodeChild = Child.RIGHT;
                 if (node.right == null) break;
                 node = node.right;
             }
@@ -127,6 +183,10 @@ public class SGTree {
             node.left = new TreeNode(key);
         } else {
             node.right = new TreeNode(key);
+        }
+
+        if (rebuildNode != null) {
+            rebuild(rebuildNode, rebuildNodeChild);
         }
     }
 
