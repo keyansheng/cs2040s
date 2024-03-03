@@ -30,7 +30,7 @@ public class SGTree {
         }
 
         private String formatTree(String prefix) {
-            String s = String.format("%s%d", prefix, this.key);
+            String s = String.format("%s%d (weight: %d)", prefix, this.key, this.weight);
             if (this.left != null) {
                 s = this.left.formatTree(prefix + "-") + "\n" + s;
             }
@@ -206,7 +206,11 @@ public class SGTree {
         }
 
         if (rebuildNode != null) {
+            System.out.println("unbalanced node detected! rebuilding " + rebuildNodeChild + " of " + rebuildNode);
+            System.out.println(this);
             rebuild(rebuildNode, rebuildNodeChild);
+            System.out.println("successfully rebuilt! the new tree is");
+            System.out.println(this);
         }
     }
 
@@ -224,8 +228,8 @@ public class SGTree {
             System.out.println("inserting " + i);
             tree.insert(i);
         }
-        tree.rebuild(tree.root, Child.RIGHT);
         System.out.println("the final tree is");
         System.out.println(tree);
+        System.out.println(tree.checkBalance(tree.root.right));
     }
 }
