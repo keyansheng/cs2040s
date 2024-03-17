@@ -1,3 +1,4 @@
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -16,6 +17,10 @@ public class MarkovModel {
 	// This is a special symbol to indicate no character
 	public static final char NOCHARACTER = (char) 0;
 
+	private HashMap<String, HashMap<Character, Integer>> charMap = new HashMap<>();
+
+	private int order;
+
 	/**
 	 * Constructor for MarkovModel class.
 	 *
@@ -24,6 +29,7 @@ public class MarkovModel {
 	 */
 	public MarkovModel(int order, long seed) {
 		// Initialize your class here
+		this.order = order;
 
 		// Initialize the random number generator
 		generator.setSeed(seed);
@@ -34,20 +40,29 @@ public class MarkovModel {
 	 */
 	public void initializeText(String text) {
 		// Build the Markov model here
+		// Excluding the last kgram
+		int numOfKgrams = text.length() - order;
+		for (int i = 0; i < numOfKgrams; i++) {
+			HashMap<Character, Integer> freqMap =
+					charMap.computeIfAbsent(text.substring(i, i + order), k -> new HashMap<>());
+			freqMap.merge(text.charAt(i + order), 1, Integer::sum);
+			// Store the total freq under the NOCHARACTER key
+			freqMap.merge(NOCHARACTER, 1, Integer::sum);
+		}
 	}
 
 	/**
 	 * Returns the number of times the specified kgram appeared in the text.
 	 */
 	public int getFrequency(String kgram) {
-		return 0;
+		return getFrequency(kgram, NOCHARACTER);
 	}
 
 	/**
 	 * Returns the number of times the character c appears immediately after the specified kgram.
 	 */
 	public int getFrequency(String kgram, char c) {
-		return 0;
+		return charMap.containsKey(kgram) ? charMap.get(kgram).getOrDefault(c, 0) : 0;
 	}
 
 	/**
@@ -58,6 +73,20 @@ public class MarkovModel {
 	public char nextCharacter(String kgram) {
 		// See the problem set description for details
 		// on how to make the random selection.
-		return 'a';
+		if (!charMap.containsKey(kgram)) {
+			return NOCHARACTER;
+		}
+		HashMap<Character, Integer> freqMap = charMap.get(kgram);
+		int index = generator.nextInt(freqMap.get(NOCHARACTER));
+		for (char c = 1; c < 256; c++) {
+			if (freqMap.containsKey(c)) {
+				index -= freqMap.get(c);
+				if (index < 0) {
+					return c;
+				}
+			}
+		}
+		// Should not reach here
+		return NOCHARACTER;
 	}
 }
