@@ -75,12 +75,79 @@ public class MazeSolver implements IMazeSolver {
 	@Override
 	public Integer bonusSearch(int startRow, int startCol, int endRow, int endCol) throws Exception {
 		// TODO: Find minimum fear level given new rules.
+		for (int[] row : dists) {
+			Arrays.fill(row, Integer.MAX_VALUE);
+		}
+		pq = new PriorityQueue<>();
+
+		Coord start = new Coord(startRow, startCol);
+		Coord end = new Coord(endRow, endCol);
+		start.setDist(0);
+		pq.add(start);
+
+		while (!pq.isEmpty()) {
+			Coord curr = pq.remove();
+			if (curr.equals(end)) {
+				return curr.dist();
+			}
+			for (int dir = 0; dir < 4; dir++) {
+				Coord next = curr.move(dir);
+				if (next != null) {
+					int weight = curr.bonusWeight(dir);
+					int newDist = weight == 0 ? curr.dist() + 1 : Math.max(curr.dist(), weight);
+					if (next.dist() > newDist) {
+						next.setDist(newDist);
+						pq.add(next);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	private Integer bonusSearch(int startRow, int startCol, int endRow, int endCol, int startDist) throws Exception {
+		// TODO: Find minimum fear level given new rules.
+		for (int[] row : dists) {
+			Arrays.fill(row, Integer.MAX_VALUE);
+		}
+		pq = new PriorityQueue<>();
+
+		Coord start = new Coord(startRow, startCol);
+		Coord end = new Coord(endRow, endCol);
+		start.setDist(startDist);
+		pq.add(start);
+
+		while (!pq.isEmpty()) {
+			Coord curr = pq.remove();
+			if (curr.equals(end)) {
+				return curr.dist();
+			}
+			for (int dir = 0; dir < 4; dir++) {
+				Coord next = curr.move(dir);
+				if (next != null) {
+					int weight = curr.bonusWeight(dir);
+					int newDist = weight == 0 ? curr.dist() + 1 : Math.max(curr.dist(), weight);
+					if (next.dist() > newDist) {
+						next.setDist(newDist);
+						pq.add(next);
+					}
+				}
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public Integer bonusSearch(int startRow, int startCol, int endRow, int endCol, int sRow, int sCol) throws Exception {
 		// TODO: Find minimum fear level given new rules and special room.
+		Integer start = bonusSearch(startRow, startCol, endRow, endCol, 0);
+		if (start != null) {
+			Integer special = bonusSearch(sRow, sCol, endRow, endCol, -1);
+			if (special != null && special < start) {
+				return special;
+			}
+			return start;
+		}
 		return null;
 	}
 
@@ -128,6 +195,10 @@ public class MazeSolver implements IMazeSolver {
 
 		private int weight(int dir) {
 			return Math.max(1, WALL_FUNCTIONS.get(dir).apply(room()));
+		}
+
+		private int bonusWeight(int dir) {
+			return WALL_FUNCTIONS.get(dir).apply(room());
 		}
 
 		@Override
