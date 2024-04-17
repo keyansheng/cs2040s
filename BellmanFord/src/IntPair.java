@@ -6,4 +6,9 @@ public class IntPair {
         this.first = first;
         this.second = second;
     }
+
+    @Override
+    public String toString() {
+        return String.format("(%d, %d)", first, second);
+    }
 }

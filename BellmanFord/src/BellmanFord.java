@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class BellmanFord {
     // DO NOT MODIFY THE TWO STATIC VARIABLES BELOW
@@ -53,4 +55,22 @@ public class BellmanFord {
         return dists[node];
     }
 
+    public static void main(String[] args) {
+        ArrayList<ArrayList<IntPair>> adjList =
+                new ArrayList<>(
+                        Stream.of(
+                                        List.of(new IntPair(3, 2)),
+                                        List.of(new IntPair(2, -2)),
+                                        List.of(new IntPair(1, 1)),
+                                        List.<IntPair>of(),
+                                        List.<IntPair>of())
+                                .map(list -> new ArrayList<>(list))
+                                .toList());
+
+        BellmanFord bf = new BellmanFord(adjList);
+        bf.computeShortestPaths(0);
+
+        System.out.println(adjList);
+        System.out.println(Arrays.toString(bf.dists));
+    }
 }
