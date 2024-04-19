@@ -1,15 +1,23 @@
+import java.util.Arrays;
+
 class InversionCounter {
 
     public static long countSwaps(int[] arr) {
-        long swaps = 0;
-        for (int size = 1; size < arr.length; size *= 2) {
-            for (int left1 = 0; left1 + size < arr.length; left1 += size * 2) {
-                int right1 = left1 + size - 1;
-                int left2 = right1 + 1;
-                int right2 = Math.min(left2 + size - 1, arr.length - 1);
-                swaps += mergeAndCount(arr, left1, right1, left2, right2);
-            }
+        if (arr.length == 1) {
+            return 0;
         }
+        long swaps = 0;
+        int[] one = Arrays.copyOfRange(arr, 0, arr.length / 2);
+        int[] two = Arrays.copyOfRange(arr, arr.length / 2, arr.length);
+        swaps += countSwaps(one);
+        swaps += countSwaps(two);
+        for (int i = 0; i < one.length; i++) {
+            arr[i] = one[i];
+        }
+        for (int i = 0; i < two.length; i++) {
+            arr[one.length + i] = two[i];
+        }
+        swaps += mergeAndCount(arr, 0, one.length - 1, one.length, arr.length - 1);
         return swaps;
     }
 
