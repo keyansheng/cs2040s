@@ -3,21 +3,21 @@ import java.util.Arrays;
 class InversionCounter {
 
     public static long countSwaps(int[] arr) {
-        if (arr.length == 1) {
+        return countSwaps(arr, 0, arr.length - 1);
+    }
+
+    private static long countSwaps(int[] arr, int begin, int end) {
+        if (begin == end) {
             return 0;
         }
         long swaps = 0;
-        int[] one = Arrays.copyOfRange(arr, 0, arr.length / 2);
-        int[] two = Arrays.copyOfRange(arr, arr.length / 2, arr.length);
-        swaps += countSwaps(one);
-        swaps += countSwaps(two);
-        for (int i = 0; i < one.length; i++) {
-            arr[i] = one[i];
-        }
-        for (int i = 0; i < two.length; i++) {
-            arr[one.length + i] = two[i];
-        }
-        swaps += mergeAndCount(arr, 0, one.length - 1, one.length, arr.length - 1);
+        int left1 = begin;
+        int right1 = begin + (end - begin) / 2;
+        int left2 = right1 + 1;
+        int right2 = end;
+        swaps += countSwaps(arr, left1, right1);
+        swaps += countSwaps(arr, left2, right2);
+        swaps += mergeAndCount(arr, left1, right1, left2, right2);
         return swaps;
     }
 
