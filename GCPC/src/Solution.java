@@ -2,34 +2,26 @@ import java.util.TreeSet;
 
 public class Solution {
     // TODO: Include your data structures here
-    private Team[] allTeams;
-    private TreeSet<Team> betterTeams = new TreeSet<>();
+    private Team[] teams;
+    private TreeSet<Team> set = new TreeSet<>();
 
 
     public Solution(int numTeams) {
         // TODO: Construct/Initialise your data structures here
-        allTeams = new Team[numTeams];
+        teams = new Team[numTeams];
         for (int i = 0; i < numTeams; i++) {
-            allTeams[i] = new Team();
+            teams[i] = new Team();
+            set.add(teams[i]);
         }
     }
 
     public int update(int team, long newPenalty){
         // TODO: Implement your update function here
-        Team team1 = allTeams[0];
-        if (team == 1) {
-            team1.update(newPenalty);
-            while (betterTeams.size() != 0 && team1.compareTo(betterTeams.last()) <= 0) {
-                betterTeams.pollLast();
-            }
-        } else {
-            Team otherTeam = allTeams[team - 1];
-            otherTeam.update(newPenalty);
-            if (otherTeam.compareTo(team1) < 0) {
-                betterTeams.add(otherTeam);
-            }
-        }
-        return betterTeams.size() + 1;
+        Team currTeam = teams[team - 1];
+        currTeam.update(newPenalty);
+        set.remove(currTeam);
+        set.add(currTeam);
+        return set.headSet(teams[0], true).size();
     }
 
     private class Team implements Comparable<Team> {
